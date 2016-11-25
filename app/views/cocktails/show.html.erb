@@ -1,19 +1,38 @@
-<h2>Cocktail</h2>
+<div class="text-center">
+  <h1><%= @cocktail.name %></h1>
 
-<p>
-  <strong>Name:</strong>
-  <%= @cocktail.name %>
-</p>
-
-
-<ul>
-<% @doses.each do |dose| %>
-
- <li>Description: <%=  dose.description %></li>
- <li>Ingredient: <%=  dose.ingredient.name %></li>
-
+  <p><h3>Ingredients</h3></p>
+  <% @cocktail.doses.each do |dose| %>
+    <ul class="list-unstyled">
+      <li>
+        <%= dose.ingredient.name %> (<%= dose.description %>)
+      </li>
+    </ul>
   <% end %>
-  </ul>
-<%= link_to 'Add Dose', new_cocktail_dose_path(@cocktail.id) %>
-<%= link_to 'Edit', edit_cocktail_path(@cocktail) %> |
-<%= link_to 'Back', cocktails_path %>
+
+  <%= simple_form_for [@cocktail, @dose] do |f| %>
+
+    <% if @dose.errors.any? %>
+      <div class="alert alert-danger" role="alert" style="color:darkred">
+        <% @dose.errors.full_messages.each do |message| %>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span>
+          <%= message.html_safe %><br>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= f.input :description, placeholder: "12 leaves, 25 cl, ..." %>
+    <%= f.input :ingredient_id, collection: Ingredient.all, prompt: "Choose an ingredient!" %>
+    <%= f.button :submit, "Add ingredient" , class: "btn btn-primary" %>
+  <% end %>
+
+  <%= cl_image_tag @cocktail.photo.url(:standard), :class => "margin10" %>
+  <br>
+  <%= link_to 'Back', cocktails_path %>
+</div>
+
+
+
+
+

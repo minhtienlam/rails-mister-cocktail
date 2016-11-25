@@ -1,40 +1,43 @@
 class CocktailsController < ApplicationController
-  before_action :set_cocktail, only: [:show, :create, :destroy, :edit]
-  #GET "cocktails"
-  def index
-    @cocktails = Cocktail.all
+  before_action :set_cocktail, only: [:show, :edit, :update, :destroy]
+
+  def index #--------------------------------------------------------
+    @cocktails = Cocktail.all.order(:name)
   end
-  # GET "cocktails/42"
-  def show
-    @doses = @cocktail.doses
+
+  def show #---------------------------------------------------------
+    @dose = Dose.new
   end
-  # GET /cocktails/new
-  def new
+
+  def new #----------------------------------------------------------
     @cocktail = Cocktail.new
   end
-  # POST "cocktails"
-  def create
+
+  def create #-------------------------------------------------------
     @cocktail = Cocktail.new(cocktail_params)
-
-    respond_to do |format|
-      if @cocktail.save
-        format.html { redirect_to @cocktail, notice: 'cocktail was successfully created.' }
-        format.json { render :show, status: :created, location: @cocktail }
-      else
-        format.html { render :new }
-        format.json { render json: @cocktail.errors, status: :unprocessable_entity }
-      end
+    if @cocktail.save
+      redirect_to cocktail_path(@cocktail)
+    else
+      render :new
     end
   end
-  # GET "cocktails/42/doses/new"
 
-  def destroy
+  def edit #----------------------------------------------------------
+  end
+
+  def update #--------------------------------------------------------
+    if @cocktail.update(cocktail_params)
+      redirect_to cocktails_path
+    else
+      render :edit
+    end
+  end
+
+  def destroy #--------------------------------------------------------
     @cocktail.destroy
-    respond_to do |format|
-      format.html { redirect_to cocktails_url, notice: 'cocktail was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to cocktails_path
   end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -44,10 +47,9 @@ class CocktailsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def cocktail_params
-      params.require(:cocktail).permit(:name)
+      #params.require(:cocktail).permit(:name, :photo)
+      # Using fetch, as it's possible no photo was given at creation
+      params.fetch(:cocktail, {}).permit(:name, :photo, :photo_cache)
     end
 
-    def find_cocktail
-    @cocktail = Cocktail.find(params[cocktail_id])
-  end
 end

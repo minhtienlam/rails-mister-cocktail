@@ -1,0 +1,31 @@
+<%= simple_form_for(@cocktail) do |f| %>
+  <% if @cocktail.errors.any? %>
+    <div class="alert alert-danger" role="alert" style="color:darkred">
+      <% @cocktail.errors.full_messages.each do |message| %>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <%= message.html_safe %><br>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <% if @cocktail.photo.filename.nil? %>
+      <%= f.input :photo, label: "Choose a picture" %>
+    <% else %>
+      <%= f.input :photo, label: "Replace the current picture" %>
+    <% end %>
+
+    <%= f.input :photo_cache, as: :hidden %>
+  </div>
+
+  <% if !@cocktail.photo.filename.nil? %>
+    <p> Current picture </p>
+    <%= cl_image_tag @cocktail.photo.url(:standard), :class => "margin10" %>
+  <% end %>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
